@@ -1,1 +1,11 @@
-<p>game works!</p>
+<section class="board" >
+  <div
+      class="text-center case"
+      *ngFor="let cell of squares">
+          {{ cell }}
+  </div>
+</section>
+
+<div class="col-12 display-6 text-center text-danger ">
+  err msg
+</div>

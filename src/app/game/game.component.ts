@@ -7,7 +7,35 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GameComponent implements OnInit {
 
-  constructor() { }
+  /**
+   * the game board
+   */
+  public squares: Array<string>;
+
+  /**
+   * table that will store the moves of player N ° 1
+   * @private
+   */
+  private playerOneContent: Array<number>;
+
+  /**
+   * table that will store the moves of player N ° 2
+   * @private
+   */
+  private playerTwoContent: Array<number>;
+
+  /**
+   * variable that determines which of the two players will start
+   * @private
+   */
+  private isFirst : boolean;
+
+  constructor() {
+      this.squares = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '];
+      this.playerOneContent = [];
+      this.playerTwoContent = [];
+      this.isFirst = false;
+  }
 
   ngOnInit(): void {
   }
@@ -15,5 +43,7 @@ export class GameComponent implements OnInit {
   private updatePlayerContent(index: number) {
 
   }
+
+
 
 }
