@@ -1,7 +1,7 @@
 <section class="board" >
   <div
       class="text-center case"
-      *ngFor="let cell of squares">
+      *ngFor="let cell of squares; let i = index" (click)="playMove(i)">
           {{ cell }}
   </div>
 </section>
