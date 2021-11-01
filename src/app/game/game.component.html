@@ -1,7 +1,8 @@
 <section class="board" >
   <div
-      class="text-center case"
-      *ngFor="let cell of squares; let i = index" (click)="playMove(i)">
+      [ngClass]="{'text-center case' : true, 'bg-danger': nextPlayer}"
+      *ngFor="let cell of squares; let i = index"
+      (click)="playMove(i)">
           {{ cell }}
   </div>
 </section>

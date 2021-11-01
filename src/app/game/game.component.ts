@@ -20,7 +20,7 @@ export class GameComponent implements OnInit {
    * variable that determines which of the two players will start
    * @private
    */
-  private nextPlayer : boolean;
+  public nextPlayer : boolean;
 
   public errorMessage: string = ' ';
 
@@ -53,26 +53,47 @@ export class GameComponent implements OnInit {
 
       if ( GameComponent.playerCantPlay(this.squares, this.isPlayer ()) ===  3) {
           this.removeCell(index);
-          console.log()
+          console.log(this.playersService.getDeletingSate(this.nextPlayer))
           return;
       }
       // jouer dans une case
       if (this.checkMove(index) !== GameComponent.ILLEGAL) {
           // on jou un cop a une position donnée
-          this.squares[index] = this.isPlayer();
+          if (index === this.playersService.getLastMovement(this.nextPlayer)) {
+            this.squares[index] = this.isPlayer();
+            return;
+          }
           if (this.playersService.getDeletingSate(this.nextPlayer)) {
-              console.log(this.isPlayer() + " remove");
+            console.log(this.isPlayer() + " remove");
+            if (this.playAfterRomove(index)) {
+              console.log("yesssssssss")
+              this.squares[index] = this.isPlayer();
               this.playersService.changeDeleteSate(this.nextPlayer);
+            } else {
+              return;
+            }
+          } else {
+            this.squares[index] = this.isPlayer();
           }
           // on compte le coup jouer de chaque joueur
           this.playersService.setLastMovement(this.nextPlayer, index);
           // au tours du deuxieme joueur
           this.nextPlayer = !this.nextPlayer;
+          for (const elem of this.playersService.towin) {
+            const vaLue_1 = elem[0];
+            const vaLue_2 = elem[1];
+            const vaLue_3 = elem[2];
+
+            if(this.gameGetSquare(vaLue_1) === ' ' || this.gameGetSquare(vaLue_2) === ' ' || this.gameGetSquare(vaLue_3) === ' ') {
+              continue
+            }
+            if(this.gameGetSquare(vaLue_1) === this.gameGetSquare(vaLue_2) && this.gameGetSquare(vaLue_2) === this.gameGetSquare(vaLue_3) ) {
+              console.log("winn arreter le jeu")
+            }
+          }
           // console.log( this.nextPlayer + " => " + this.playersService.getLastMovement(this.nextPlayer))
 
       }
-
-
   }
 
   /**
@@ -108,10 +129,44 @@ export class GameComponent implements OnInit {
           console.log('bouger un de vos pion')
       }else if ( this.squares[index] === this.isPlayer()) {
           this.squares[index] = ' ';
-          this.playersService.changeDeleteSate(this.nextPlayer);
+          if (!this.playersService.getDeletingSate(this.nextPlayer)) {
+              this.playersService.changeDeleteSate(this.nextPlayer);
+          }
           this.playersService.setLastMovement(this.nextPlayer,index);
       } else {
           console.log('pas ton pion')
       }
   }
+
+  private playAfterRomove(newIndex: number): boolean {
+    const oldIndex = this.playersService.getLastMovement(this.nextPlayer);
+    if (oldIndex > -1) {
+      const oldRow = Math.trunc(oldIndex / 3);
+      const oldCol = oldIndex % 3;
+
+      const newRow = Math.trunc(newIndex / 3);
+      const newCol = newIndex % 3;
+
+      console.log(newRow -1 === oldRow)
+
+      if (
+        ( (newRow + 1 === oldRow) && (newCol === oldCol) ) ||
+        ( (newRow - 1 === oldRow) && (newCol === oldCol) ) ||
+        ( (newCol + 1 === oldCol) && (newRow === oldRow) ) ||
+        ( (newCol - 1 === oldCol) && (newRow === oldRow) ) ||
+
+        ( (newRow - 1 === oldRow) && newCol + 1 === oldCol ) ||
+        ( (newRow - 1 === oldRow) && newCol - 1 === oldCol ) ||
+        ( (newRow + 1 === oldRow) && newCol + 1 === oldCol ) ||
+        ( (newRow + 1 === oldRow) && newCol - 1 === oldCol )
+      ) {
+        return true;
+      }
+      return false;
+
+    }
+    return true;
+  }
+
+  private gameGetSquare(index: number): string { return this.squares[index] }
 }
